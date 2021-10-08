@@ -157,7 +157,7 @@ Although not necessary, it can be of use when debugging or for future features.
 - Polygon
 - Ellipse
 - Curve
-  - Handful list of algebraic curves can be found [here](https://www.2dcurves.com/)
+  - Handy list of algebraic curves can be found [here](https://www.2dcurves.com/)
   - [Bézier curve](https://en.wikipedia.org/wiki/B%C3%A9zier_curve)
     - Examples of this can be found on [p5.js source](https://github.com/processing/p5.js/) guided by [it's documentation](https://p5js.org/reference/)
     - Calculating the [bounding box](http://nishiohirokazu.blogspot.com/2009/06/how-to-calculate-bezier-curves-bounding.html)
