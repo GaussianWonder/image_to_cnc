@@ -31,7 +31,20 @@ calculatorului
 | **University**    | `UTCN CTI EN`        |
 | **Year of study** | `3`                  |
 
-<div style="page-break-after: always;"></div>
+<table>
+<tr>
+<td><img src="./assets/qrcode_github.com.png" width="225px" height="225px" /></td>
+<td>
+<ul>
+<li><a href="https://github.com/GaussianWonder">Git</a></li>
+<li><a href="https://github.com/GaussianWonder/scs-project">Repo</a></li>
+<li><a href="https://raw.githubusercontent.com/GaussianWonder/osu-utility/main/assets/qrcode_github.com.png">QR image URL</a></li>
+</ul>
+</td>
+</tr>
+</table>
+
+<div class="page"/>
 
 ## Contents
 
@@ -58,7 +71,7 @@ calculatorului
   - [**Conclusions**](#conclusions)
   - [Bibliography](#bibliography)
 
-<div style="page-break-after: always;"></div>
+<div class="page"/>
 
 ## **Introduction**
 
@@ -93,7 +106,7 @@ Because of the given specification, an implementation of a configurable simulato
 
 Given enough time, implement **a configurable slicing algorithm** for *3D objects* and sequentially pipe them into the main algorithm described above to further demonstrate its usability.
 
-<div style="page-break-after: always;"></div>
+<div class="page"/>
 
 ## Bibliographic Study
 
@@ -147,6 +160,8 @@ Although not necessary, it can be of use when debugging or for future features.
 
 > This is currently marked as not a requirement
 
+<div class="page"/>
+
 ### 2D Primitives
 
 **The list of 2D Graphics Primitives is pretty narrow:**
@@ -178,8 +193,6 @@ As far as the `Simulator` is concerned, I want it to live in a powerful, fast en
 
 **`Memory safety` and `Thread safety`** are important for this specific tasks. Given the generic nature this has to be implemented in, it follows that it should support batch processing in order to be included in other systems.
 
-<div style="page-break-after: always;"></div>
-
 #### **RUST**
 
 > A language empowering everyone to build reliable and efficient software.
@@ -195,23 +208,23 @@ As far as the `Simulator` is concerned, I want it to live in a powerful, fast en
 | Memory Safe           | [ownership](https://doc.rust-lang.org/book/ch04-00-understanding-ownership.html)                 | ✓                          | [Programming language](#programming-language)    |
 | ~~Garbage Collector~~ | [bamboozle](https://blog.akquinet.de/2020/10/09/yes-rust-has-garbage-collection-and-a-fast-one/) | ✓, Not a runtime GC        | [Programming language](#programming-language)    |
 
-<div style="page-break-after: always;"></div>
+<div class="page"/>
 
 ## **Analisys**
 
-<div style="page-break-after: always;"></div>
+<div class="page"/>
 
 ## **Design**
 
-<div style="page-break-after: always;"></div>
+<div class="page"/>
 
 ## **Implementation**
 
-<div style="page-break-after: always;"></div>
+<div class="page"/>
 
 ## Testing and Validation
 
-<div style="page-break-after: always;"></div>
+<div class="page"/>
 
 ## **Conclusions**
 
@@ -219,7 +232,7 @@ As far as the `Simulator` is concerned, I want it to live in a powerful, fast en
 [...]
 ```
 
-<div style="page-break-after: always;"></div>
+<div class="page"/>
 
 ## Bibliography
 
