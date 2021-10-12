@@ -212,6 +212,46 @@ As far as the `Simulator` is concerned, I want it to live in a powerful, fast en
 
 ## **Analisys**
 
+```mermaid
+flowchart LR
+  subgraph Init
+    config>Config];
+    input>Input];
+    simulation((Simulation));
+  end
+
+  subgraph Conversion
+    inputif{Is image?};
+    edge[Edge detection];
+    graphics[2D Graphics];
+
+    subgraph Generation
+      points[Points];
+      commands[Commands];
+    end
+  end
+
+  subgraph Output
+    points_out(PT out);
+    commands_out(CMD out);
+  end
+
+  config -.- simulation;
+  input --> simulation;
+
+  simulation --> inputif;
+  inputif -->|yes|edge;
+  inputif -->|no|graphics;
+  edge --> graphics;
+  graphics -->points;
+
+  config -.- points;
+  points --> commands;
+
+  points --> points_out;
+  commands --> commands_out;
+```
+
 <div class="page"/>
 
 ## **Design**
