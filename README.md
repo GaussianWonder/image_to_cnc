@@ -92,7 +92,7 @@ The **output** of the algorithm should be **encoded simple** enough such that it
 
 ### **Specification**
 
-The algorithm will be **simulated** in a *configurable* **simulation** that accepts similar commands to the output of the algorithm.
+The algorithm will be **simulated** in a *configurable* **simulation** that accepts similar (or identical) commands to the output of the algorithm.
 
 ### **Objectives**
 
@@ -212,6 +212,8 @@ As far as the `Simulator` is concerned, I want it to live in a powerful, fast en
 
 ## **Analisys**
 
+High level overview and planification:
+
 ```mermaid
 flowchart LR
   subgraph Init
@@ -242,7 +244,7 @@ flowchart LR
   simulation --> inputif;
   inputif -->|yes|edge;
   inputif -->|no|graphics;
-  edge --> graphics;
+  edge --> points;
   graphics -->points;
 
   config -.- points;
@@ -250,6 +252,45 @@ flowchart LR
 
   points --> points_out;
   commands --> commands_out;
+```
+
+```mermaid
+gantt
+  dateFormat YYYY-MM-DD
+  title Project planification
+  excludes Tuesday Wednesday Thursday
+
+  section Overall
+
+  Simulation            :active,  ov1, 2021-10-22,  10d
+  Conversion            :         ov2, after ov1,   10d
+  Merging Modules       :crit,    ov3, after con5,  3d
+
+  section Documentation
+
+  Project Proposal      :done,    doc1, 2021-10-08, 2d
+  Bibliographic Study   :done,    doc2, 2021-10-10, 3d
+  Planning              :done,    doc3, 2021-10-16, 1d
+  Analisys              :active,  doc4, after doc3, 2d
+  Design                :crit,    doc5, after doc4, 2d
+  Implementation        :crit,    doc6, after sim1, 2d
+  Testing and Validation:crit,    doc7, after con5, 2d
+
+  section Simulation
+
+  Context setup         :active,  sim1, 2021-10-22, 4d
+  Control Rod           :         sim2, after sim1, 2d
+  CTL                   :         sim3, after sim2, 2d
+  Command Interpreter   :         sim4, after sim3, 1d
+  Config                :crit,    sim5, after sim4, 1d
+
+  section Conversion
+
+  Context setup         :crit,    con1, after ov1,  1d
+  Input parsing         :         con2, after con1, 1d
+  Edge detection        :         con3, after con2, 1d
+  2D Primitives         :         con4, after con3, 2d
+  Config                :crit,    con5, after con4, 2d
 ```
 
 <div class="page"/>
