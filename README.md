@@ -44,6 +44,8 @@ calculatorului
 </tr>
 </table>
 
+> I suggest reading the PDF version of this README here <https://github.com/GaussianWonder/scs-project/blob/main/README.pdf>
+
 <div class="page"/>
 
 ## Contents
