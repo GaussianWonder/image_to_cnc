@@ -67,6 +67,8 @@ calculatorului
     - [Programming language](#programming-language)
       - [**RUST**](#rust)
   - [**Analisys**](#analisys)
+    - [**Command output**](#command-output)
+    - [**Config options**](#config-options)
   - [**Design**](#design)
   - [**Implementation**](#implementation)
   - [Testing and Validation](#testing-and-validation)
@@ -297,7 +299,80 @@ gantt
 
 <div class="page"/>
 
+### **Command output**
+
+What hasn't been discussed yet is the command output language.
+
+The normal approach to this problem would be to compile the point collection into [GCode](https://en.wikipedia.org/wiki/G-code) since it is the most widely used CNC programming language. However i decided to go with **a custom approach** since the simulator that accepts these commands will be simple, and the commands themselves are simple enough too.
+
+The program must accomodate a drawing mechanism. Such mechanisms need to be able to move on a plane (drawing or not) and optionally stay idle
+
+Thus the command list compilation is
+
+- **Pen** `down`
+  - Puts the pen down
+  - Any move statements after this will be *drawing* on the canvas
+- **Pen** `up`
+  - Raises the pen up
+  - Any move statements after this will just *transport* the tip to another location
+- **Move** `{X|Y}` `{DIST}`
+  - Move the tip DIST on X or Y axis
+- **GO** `{X}` `{Y}`
+  - Move the tip to coordinate {X} {Y}
+
+### **Config options**
+
+Both the simulation and the conversion algorithm benefit from the use of the same config options.
+
+The simulation needs to be configured in order to precisely display the effects of the algorithm.
+
+The conversion algorithm needs the configuration to match the capabilities of the machine that's going to be used.
+
+Judging by the commands above, **machine precision** is a must configuration option. This will be a number that describes how far apart or *how close together* the generated points can be, before converting them into commands.
+
+A flag that tells the algorithm whether to use **relative** or **absolute** tip movement is also required.
+
+One last requirement is the possibility to map the input to some other **resolution**
+
+The configuration will be described in a JSON file, or via arguments:
+
+- **--precision** `2`
+- **--absolute**
+- **--map** `100` `100`
+
+```json
+{
+  "precision": 2,
+  "absolute": true,
+  "map": {
+    "x": 100,
+    "y": 100
+  }
+}
+```
+
+<div class="page"/>
+
 ## **Design**
+
+The simulation will display a simple control to choose an input file and a configuration file.
+
+Once both are selected, **2/3** of the screen will be used to display the preview with several controls available to the user:
+
+- **Toggle input**
+  - Displays the input image below the preview
+  - If no image was provided, it will draw the 2D Graphical shapes under the preview instead
+- **Stop**
+  - Pauses the simulation
+- **Next**
+  - If stopped, this will execute the next command
+  - While normal execution, this button will not be available
+- **Resume**
+  - Resumes the normal execution of the preview
+- **Reset**
+  - Delete everything and restart the process
+
+Changing the input will result in a **Reset**.
 
 <div class="page"/>
 
@@ -319,6 +394,35 @@ gantt
 
 ## Bibliography
 
-```text
-[...]
-```
+- OpenCV
+  - <https://docs.opencv.org/>
+    - <https://docs.opencv.org/4.5.3/df/d0d/tutorial_find_contours.html>
+    - <https://docs.opencv.org/4.5.3/d7/d1d/tutorial_hull.html>
+    - <https://docs.opencv.org/4.5.3/dc/dd3/tutorial_gausian_median_blur_bilateral_filter.html>
+  - <https://github.com/opencv/opencv>
+
+- Canny Edge Detector
+  - <https://datacarpentry.org/image-processing/06-blurring/>
+  - <https://en.wikipedia.org/wiki/Sobel_operator>
+
+- Canny Edge Detection Articles
+  - <https://towardsdatascience.com/canny-edge-detection-step-by-step-in-python-computer-vision-b49c3a2d8123>
+  - <https://justin-liang.com/tutorials/canny/>
+
+- Curves
+  - <https://www.2dcurves.com/>
+  - <https://en.wikipedia.org/wiki/B%C3%A9zier_curve>
+  - <https://en.wikipedia.org/wiki/Centripetal_Catmull%E2%80%93Rom_spline>
+
+- Code examples
+  - <https://github.com/processing/p5.js/>
+  - <http://nishiohirokazu.blogspot.com/2009/06/how-to-calculate-bezier-curves-bounding.html>
+  - <https://p5js.org/reference/>
+
+- Rust
+  - <https://github.com/nannou-org/nannou>
+  - <https://github.com/twistedfall/opencv-rust>)
+  - <https://github.com/rust-cv/cv>
+
+- GCode
+  - <https://en.wikipedia.org/wiki/G-code>
