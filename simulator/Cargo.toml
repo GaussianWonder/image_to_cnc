@@ -2,7 +2,7 @@
 name = "simulator"
 version = "0.1.0"
 edition = "2018"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+authors = ["gaussianwonder <teo.virghi@yahoo.ro>"]
 
 [dependencies]
+nannou = "0.17"
