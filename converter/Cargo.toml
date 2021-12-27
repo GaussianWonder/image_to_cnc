@@ -3,6 +3,11 @@ name = "converter"
 version = "0.1.0"
 edition = "2018"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
-
 [dependencies]
+sdl2 = { version = "0.34.2", optional = true, default-features = false, features = ["bundled"] }
+sdl2-sys = "0.34.2"
+imageproc = { version = "0.22.0", features = ["display-window"] }
+image = "0.23.14"
+
+[features]
+display-window = ["sdl2"]
