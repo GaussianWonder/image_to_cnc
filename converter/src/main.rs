@@ -1,4 +1,5 @@
 mod args_parse;
+mod canny;
 
 #[cfg(feature = "display-window")]
 fn main() {
