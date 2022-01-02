@@ -107,7 +107,7 @@ When generating 2D Points, you are required to expose the `-i` argument unless y
 Generate the points, draw them on the original image, then export the resulting image:
 
 ```bash
-cargo run -- ./assets/test.jpg -o ./assets/export export -d 0.95
+cargo run -- ./assets/test.jpg -o ./assets/export export -d 0.50
 ```
 
 > This exists for debugging / preview purposes.
@@ -117,10 +117,15 @@ cargo run -- ./assets/test.jpg -o ./assets/export export -d 0.95
 Generate the points, export them as JSON.
 
 ```bash
-cargo run -- ./assets/test.jpg -o ./assets/export export -p 0.95
+cargo run -- ./assets/test.jpg -o ./assets/export export -p 0.50
 ```
 
 ## Notes
 
 - You can mix-match any `[OPTIONS]` with one another, none of them are mutual exclusive. This means that you can have any combination of `-i`, `-d`, `-p` in the export subcommand, and the files will be exported accordingly.
 - `-p` and `-d` have independent values. Previews(Debug view) can be generated with a lower precision.
+- When dealing with precision keep in mind that:
+  - 1.0 precision takes each pixel as a point
+  - 0.5 precision skips every other pixel
+  - 0.3 precision skips every 3rd pixel
+  - ...

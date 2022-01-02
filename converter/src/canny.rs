@@ -114,11 +114,7 @@ pub fn to_points(image: &image::GrayImage, point_precision: f32) -> Edges<usize>
   // when dealing with curves, a weighted average between these two is performed
   // the weights are calculated based on the current and the previous accounted pixel
   let dx_skip = (image.width() as f32 / width as f32) as i32;
-  println!("dx_skip: {} = {} / {}", dx_skip, image.width(), width);
-  println!("width: {}, new_width: {}", image.width(), width);
   let dy_skip = (image.height() as f32 / height as f32) as i32;
-  println!("dx_skip: {}, dy_skip: {}", dx_skip, dy_skip);
-
   let cost_skip = dx_skip + dy_skip;
 
   let mut edges = Edges::<usize>::new();
