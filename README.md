@@ -1,5 +1,7 @@
 # (16) Image / Graphics Shapes to (x, y) converter
 
+The [Standalone Conversion](converter/README.md) program has an independent documentation that can be found [here](converter/README.md).
+
 ## Preface
 
 **Task title:**

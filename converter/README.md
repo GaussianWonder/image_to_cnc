@@ -151,8 +151,10 @@ cargo run --release -- ./assets/test.jpg -l 15 -h 50 -o ./assets/export export -
 Generate everything without the multi-edge export, while skipping the canny-edge detection:
 
 ```bash
-cargo run --release -- ./assets/test.jpg -l 15 -h 50 --skip-canny -o ./assets/export export -d 0.20 -i -p 0.2 --skip-indexing
+cargo run --release -- ./assets/test.jpg -l 15 -h 50 --skip-canny -o ./assets/export export -d 0.20 -p 0.2 --skip-indexing
 ```
+
+> notice the missing `-i` flag. It is redundant because of the `--skip-canny` flag which bypasses the edge-detection process anyways.
 
 ## Notes
 
