@@ -19,6 +19,10 @@ pub struct Config {
   pub export_options: ExportOptions,
 }
 
+impl Config {
+  
+}
+
 #[derive(Debug)]
 pub struct ExportOptions {
   // point resolution for JSON export

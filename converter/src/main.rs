@@ -6,6 +6,7 @@ use std::fs::{File};
 
 #[cfg(feature = "display-window")]
 fn main() {
+    use imageproc::window::display_multiple_images;
     let config = args_parse::get();
 
     let image = image::open(config.input_file)
@@ -24,16 +25,28 @@ fn main() {
     let config = args_parse::get();
 
     // construct the edges image from the grayscaled input
-    let image = image::open(&config.input_file)
+    // let image = image::open(&config.input_file)
+    //     .expect("No image found at input_file path")
+    //     .grayscale()
+    //     .to_luma8();
+
+    let original = image::open(&config.input_file)
         .expect("No image found at input_file path")
+        .to_rgb8();
+
+    let gray_image = image::DynamicImage::ImageRgb8(canny::copy_image(&original))
         .grayscale()
         .to_luma8();
 
-    let edges = imageproc::edges::canny(&image, config.low_threshold, config.high_threshold);
+    let edges_image = image::DynamicImage::ImageLuma8(
+        imageproc::edges::canny(&gray_image, config.low_threshold, config.high_threshold)
+    );
 
     // if image export is enabled, write the edges image to the output file
     if config.export_options.image {
-        let result = edges.save(config.export_path.join(format!("{}_edges.{}", config.input_name, config.input_extension)));
+        let result = edges_image.save(
+            config.export_path.join(format!("{}_edges.{}", config.input_name, config.input_extension)
+        ));
         if result.is_err() {
             println!("Error saving image: {:?}", result.err());
         }
@@ -43,7 +56,7 @@ fn main() {
     if let Some(point_precision) = config.export_options.point_precision {
         // convert points to json
         let points_json = serde_json::to_string(
-            &canny::to_serializable_points(&edges, point_precision)
+            &canny::to_serializable_points(&edges_image, point_precision)
         ).unwrap();
         // save points to file
         let handle = File::create(config.export_path.join(format!("{}_points.json", config.input_name)));
@@ -62,14 +75,19 @@ fn main() {
 
     // if debug point precision is enabled, draw the edges on the input image and save it
     if let Some(point_precision) = config.export_options.debug_preview {
-        let mut original = image::open(&config.input_file)
-            .expect("No image found at input_file path")
-            .to_rgb8();
-        let points = canny::to_points(&edges, point_precision);
-        // println!("{:#?}", points);
+        let mut draw_image = image::DynamicImage::ImageRgb8(canny::copy_image(&original));
+        let computation = canny::to_serializable_points(&edges_image, point_precision);
 
-        canny::draw_edges_on(&mut original, &points, 2, &canny::rand_rgb_vec(20));
-        let saved_debug_preview = original.save(
+        canny::draw_each_edge_of(
+            &mut draw_image,
+            &computation,
+            &canny::MultiExport {
+                path: config.export_path.join("edges"),
+                input_name: config.input_name.clone(),
+                extension: config.input_extension.clone(),
+            },
+        );
+        let saved_debug_preview = draw_image.save(
             config.export_path.join(format!("{}_debug_preview.{}", config.input_name, config.input_extension))
         );
 
