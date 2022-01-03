@@ -1,5 +1,6 @@
 # Not used anymore because of clap-v3's Issue #3087 https://github.com/clap-rs/clap/issues/3087
 # This is equivalent to the huge builder pattern found in args_parse.rs in the get_raw function
+# This is no longer kept up-to-date
 name: converter
 version: "0.1.0"
 author: Virghileanu Teodor <@GaussianWonder>
