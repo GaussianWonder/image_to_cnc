@@ -33,7 +33,7 @@ cargo run -- help
 Yields:
 
 ```text
-converter 0.1.0
+converter 0.1.1
 Virghileanu Teodor <@GaussianWonder>
 CNC Converter
 
@@ -48,6 +48,7 @@ OPTIONS:
         --help                        Print help information
     -l, --low-threshold <FLOAT32>     Sets the low threshold for the Canny edge detector (>=0) [default: 50.0]
     -o, --output <DIRECTORY PATH>     Sets a custom export path
+        --skip-canny                  Skips the Canny edge detection and uses the input image as-is after a black and white conversion
     -V, --version                     Print version information
 
 SUBCOMMANDS:
@@ -65,7 +66,7 @@ cargo run -- export --help
 Yields:
 
 ```text
-converter-export 0.1.0
+converter-export 0.1.1
 Virghileanu Teodor <@GaussianWonder>
 controls export features
 
@@ -77,6 +78,7 @@ OPTIONS:
     -h, --help                       Print help information
     -i, --image                      Export image to the given export path
     -p, --p_precision <FLOAT32>      Exports edge points with a given precision. This is a scale factor for the initial image resolution
+        --skip-indexing              Excludes individual edge images from the export
     -V, --version                    Print version information
 ```
 
@@ -84,6 +86,14 @@ OPTIONS:
 
 ```bash
 cargo run -- ./assets/test.jpg
+```
+
+##### Skip the canny-edge detection
+
+Sometimes the image provided is already processed. Re-exposing it to the canny-edge detection algorithm will trace the 2D objects outline, rendering them empty on the inside.
+
+```bash
+cargo run -- ./assets/test.jpg --skip-canny
 ```
 
 #### Adjust min/max thresholds
@@ -110,7 +120,17 @@ Generate the points, draw them on the original image, then export the resulting 
 cargo run -- ./assets/test.jpg -o ./assets/export export -d 0.50
 ```
 
-> This exists for debugging / preview purposes.
+This also generates an `edges` folder that contains individual images for each edge, with indexed points.
+
+##### Skipping individual edges multi-export
+
+To skip this process which can take a long time, you can:
+
+```bash
+cargo run -- ./assets/test.jpg -o ./assets/export export -d 0.50 --skip-indexing
+```
+
+> This has no effect without the `-d` argument provided
 
 #### Generate points
 
@@ -118,6 +138,20 @@ Generate the points, export them as JSON.
 
 ```bash
 cargo run -- ./assets/test.jpg -o ./assets/export export -p 0.50
+```
+
+#### More examples
+
+Generate everything, without skipping the canny-edge detection:
+
+```bash
+cargo run --release -- ./assets/test.jpg -l 15 -h 50 -o ./assets/export export -d 0.20 -i -p 0.2
+```
+
+Generate everything without the multi-edge export, while skipping the canny-edge detection:
+
+```bash
+cargo run --release -- ./assets/test.jpg -l 15 -h 50 --skip-canny -o ./assets/export export -d 0.20 -i -p 0.2 --skip-indexing
 ```
 
 ## Notes

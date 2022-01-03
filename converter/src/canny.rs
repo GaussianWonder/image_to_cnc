@@ -180,7 +180,6 @@ pub fn to_serializable_points(image: &DynamicImage, point_precision: f32) -> Ser
 use imageproc::drawing::{draw_filled_circle_mut, draw_text_mut, draw_line_segment_mut};
 use rand::Rng;
 use rusttype::{Font, Scale};
-use std::io::prelude::*;
 use std::fs::{File};
 use std::path::PathBuf;
 

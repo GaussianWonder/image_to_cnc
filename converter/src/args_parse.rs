@@ -15,6 +15,7 @@ pub struct Config {
   pub low_threshold: f32,
   pub high_threshold: f32,
 
+  pub skip_canny_edge_detection: bool,
   // export configuration
   pub export_options: ExportOptions,
 }
@@ -27,11 +28,13 @@ pub struct ExportOptions {
   pub image: bool,
   // export edge detected image with drawn points
   pub debug_preview: Option<f32>,
+  // exclude individual image generation for each edge from the export
+  pub exclude_individual_edges: bool,
 }
 
 pub fn get_raw() -> ArgMatches {
   App::new("converter")
-    .version("0.1.0")
+    .version("0.1.1")
     .author("Virghileanu Teodor <@GaussianWonder>")
     .about("CNC Converter")
     .arg(Arg::new("INPUT")
@@ -59,9 +62,12 @@ pub fn get_raw() -> ArgMatches {
       .help("Sets the high threshold for the Canny edge detector (<=1140.39)")
       .takes_value(true)
       .default_value("60.0"))
+    .arg(Arg::new("skip_canny_edge_detection")
+      .long("skip-canny")
+      .help("Skips the Canny edge detection and uses the input image as-is after a black and white conversion"))
     .subcommand(App::new("export")
       .about("controls export features")
-      .version("0.1.0")
+      .version("0.1.1")
       .author("Virghileanu Teodor <@GaussianWonder>")
       .arg(Arg::new("point_precision")
         .short('p')
@@ -79,6 +85,9 @@ pub fn get_raw() -> ArgMatches {
         .value_name("FLOAT32")
         .help("Exports the image with points traced on it. This comes with its own scale value for point precision. See point_precision for details")
         .takes_value(true))
+      .arg(Arg::new("exclude_individual_edges")
+        .long("skip-indexing")
+        .help("Excludes individual edge images from the export"))
     ).get_matches()
 }
 
@@ -109,6 +118,7 @@ fn get_export_options(args: &ArgMatches) -> ExportOptions {
     };
 
     let image = export.is_present("image");
+    let exclude_individual_edges = export.is_present("exclude_individual_edges");
 
     let debug_preview = if let Some(debug_preview) = export.value_of("debug_preview") {
       match debug_preview.parse::<f32>() {
@@ -126,6 +136,7 @@ fn get_export_options(args: &ArgMatches) -> ExportOptions {
       point_precision,
       image,
       debug_preview,
+      exclude_individual_edges,
     }
   }
   else {
@@ -133,6 +144,7 @@ fn get_export_options(args: &ArgMatches) -> ExportOptions {
       point_precision: None,
       image: true, // by default export just the image
       debug_preview: None,
+      exclude_individual_edges: false,
     }
   }
 }
@@ -192,6 +204,7 @@ pub fn get() -> Config {
     input_extension: file_extension,
     low_threshold,
     high_threshold,
+    skip_canny_edge_detection: args.is_present("skip_canny_edge_detection"),
     export_options: export,
   }
 }
