@@ -24,7 +24,6 @@ pub struct SerializebleComputation {
 }
 
 // PixelIndex and edge equivalents, used to comply with the image crate
-// TODO impl deserialize and serialize for imageproc::point::Point to replace duplicate types
 pub type PixelIndex = Point<usize>;
 type PixelRelativeIndex = Point<i32>;
 pub type Edge<T> = Vec<Point<T>>;
