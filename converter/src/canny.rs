@@ -195,21 +195,21 @@ fn rand_rgba() -> Rgba<u8> {
 }
 
 fn draw_edges(image: &mut DynamicImage, computation: &SerializebleComputation, radius: i32, per_edge_export_path: Option<&MultiExport>) {
-  let font = Vec::from(include_bytes!("../assets/DejaVuSans.ttf") as &[u8]);
-  let font = Font::try_from_vec(font).unwrap();
-  let font_size = 12.0;
-  let scale = Scale {
-      x: font_size,
-      y: font_size,
-  };
-
+  // keep a copy of the original, for the per_edge_export_path case
   let original_copy = image.clone();
   let SerializebleComputation { edges, .. } = computation;
 
-  for (edge_index, edge) in edges.iter().enumerate() {
-    let mut edge_copy = original_copy.clone();
-
+  for edge in edges {
     let color = rand_rgba();
+    let first = edge[0]; // empty edges are not allowed, this is 100% safe
+    // avoid double loops by always drawing the first point from the point list
+    draw_filled_circle_mut(
+      image,
+      (first.x as i32, first.y as i32),
+      radius,
+      color,
+    );
+
     for point_pair in edge.windows(2) {
       let p1 = point_pair[0];
       let p2 = point_pair[1];
@@ -219,37 +219,63 @@ fn draw_edges(image: &mut DynamicImage, computation: &SerializebleComputation, r
         (p2.x as f32, p2.y as f32),
         color
       );
-      draw_line_segment_mut(
-        &mut edge_copy,
-        (p1.x as f32, p1.y as f32),
-        (p2.x as f32, p2.y as f32),
-        color
-      );
-    }
-
-    for point in edge {
+      // avoid double loops by always drawing the second point from the window
       draw_filled_circle_mut(
         image,
-        (point.x as i32, point.y as i32),
-        radius,
-        color,
-      );
-      draw_filled_circle_mut(
-        &mut edge_copy,
-        (point.x as i32, point.y as i32),
+        (p2.x as i32, p2.y as i32),
         radius,
         color,
       );
     }
+  }
 
-    if let Some(export) = per_edge_export_path {
-      for (index, point) in edge.iter().enumerate() {  
+  if let Some(export) = per_edge_export_path {
+    // reloop to avoid unnecessary font mingling
+    let font = Vec::from(include_bytes!("../assets/DejaVuSans.ttf") as &[u8]);
+    let font = Font::try_from_vec(font).unwrap();
+    let font_size = 12.0;
+    let scale = Scale {
+        x: font_size,
+        y: font_size,
+    };
+
+    for (edge_index, edge) in edges.iter().enumerate() {
+      // a copy of the above loop, but meant for individiual edges
+      let mut edge_copy = original_copy.clone();
+      let color = rand_rgba();
+      let first = edge[0];
+      draw_filled_circle_mut(
+        &mut edge_copy,
+        (first.x as i32, first.y as i32),
+        radius,
+        color,
+      );
+
+      for point_pair in edge.windows(2) {
+        let p1 = point_pair[0];
+        let p2 = point_pair[1];
+        draw_line_segment_mut(
+          &mut edge_copy,
+          (p1.x as f32, p1.y as f32),
+          (p2.x as f32, p2.y as f32),
+          color
+        );
+        draw_filled_circle_mut(
+          &mut edge_copy,
+          (p2.x as i32, p2.y as i32),
+          radius,
+          color,
+        );
+      }
+      // draw text on top of the image
+      for (index, point) in edge.iter().enumerate() {
         if index % 10 == 0 {
+          // best-bet, low effort coloring to be as readable as possible
           let mut inverted_color = original_copy.get_pixel(point.x as u32, point.y as u32);
           inverted_color[0] = 255 - inverted_color[0];
           inverted_color[1] = 255 - inverted_color[1];
           inverted_color[2] = 255 - inverted_color[2];
-
+  
           draw_text_mut(
             &mut edge_copy,
             inverted_color,

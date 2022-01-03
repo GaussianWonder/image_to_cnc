@@ -18,11 +18,19 @@ fn main() {
         .to_luma8();
 
     let edges_image = image::DynamicImage::ImageLuma8(
-        imageproc::edges::canny(&gray_image, config.low_threshold, config.high_threshold)
+        if config.skip_canny_edge_detection {
+            let mut black_white = canny::copy_image(&gray_image);
+            // apply bi level color map
+            image::imageops::dither(&mut black_white, &image::imageops::BiLevel);
+            black_white
+        }
+        else {
+            imageproc::edges::canny(&gray_image, config.low_threshold, config.high_threshold)
+        }
     );
 
     // if image export is enabled, write the edges image to the output file
-    if config.export_options.image {
+    if config.export_options.image && !config.skip_canny_edge_detection {
         let result = edges_image.save(
             config.export_path.join(format!("{}_edges.{}", config.input_name, config.input_extension)
         ));
@@ -58,15 +66,24 @@ fn main() {
         let mut draw_image = image::DynamicImage::ImageRgb8(canny::copy_image(&original));
         let computation = canny::to_serializable_points(&edges_image, point_precision);
 
-        canny::draw_each_edge_of(
-            &mut draw_image,
-            &computation,
-            &canny::MultiExport {
-                path: config.export_path.join("edges"),
-                input_name: config.input_name.clone(),
-                extension: config.input_extension.clone(),
-            },
-        );
+        if config.export_options.exclude_individual_edges {
+            canny::draw_edges_on(
+                &mut draw_image,
+                &computation,
+            );
+        }
+        else {
+            canny::draw_each_edge_of(
+                &mut draw_image,
+                &computation,
+                &canny::MultiExport {
+                    path: config.export_path.join("edges"),
+                    input_name: config.input_name.clone(),
+                    extension: config.input_extension.clone(),
+                },
+            );
+        }
+
         let saved_debug_preview = draw_image.save(
             config.export_path.join(format!("{}_debug_preview.{}", config.input_name, config.input_extension))
         );
