@@ -4,22 +4,6 @@ mod canny;
 use std::io::prelude::*;
 use std::fs::{File};
 
-#[cfg(feature = "display-window")]
-fn main() {
-    use imageproc::window::display_multiple_images;
-    let config = args_parse::get();
-
-    let image = image::open(config.input_file)
-        .expect("No image found at input_file path")
-        .grayscale()
-        .to_luma8();
-
-    let edges = imageproc::edges::canny(&image, config.low_threshold, config.high_threshold);
-
-    display_multiple_images("", &vec![&image, &edges], image.width() as u32, image.height() as u32);
-}
-
-#[cfg(not(feature = "display-window"))]
 fn main() {
     // parse arguments
     let config = args_parse::get();

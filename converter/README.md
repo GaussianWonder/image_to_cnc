@@ -8,6 +8,8 @@
 cargo run --release --features display-window -- [...other options]
 ```
 
+> DEPRECATED, THIS IS NOT PART OF THE PROJECT ANYMORE since it was rendered useless by the export preview feature.
+
 ### Export output to file(s)
 
 ```bash
