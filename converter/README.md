@@ -76,9 +76,9 @@ USAGE:
 OPTIONS:
     -d, --debug_preview <FLOAT32>    Exports the image with points traced on it. This comes with its own scale value for point precision. See point_precision for details
     -h, --help                       Print help information
-    -i, --image                      Export image to the given export path
+    -i, --image                      Export edge detected image to the given export path. This is disabled by the --skip-canny flag
     -p, --p_precision <FLOAT32>      Exports edge points with a given precision. This is a scale factor for the initial image resolution
-        --skip-indexing              Excludes individual edge images from the export
+        --skip-indexing              Excludes individual edge images from the debug_preview
     -V, --version                    Print version information
 ```
 

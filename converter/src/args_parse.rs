@@ -78,7 +78,7 @@ pub fn get_raw() -> ArgMatches {
       .arg(Arg::new("image")
         .short('i')
         .long("image")
-        .help("Export image to the given export path"))
+        .help("Export edge detected image to the given export path. This is disabled by the --skip-canny flag"))
       .arg(Arg::new("debug_preview")
         .short('d')
         .long("debug_preview")
@@ -87,7 +87,7 @@ pub fn get_raw() -> ArgMatches {
         .takes_value(true))
       .arg(Arg::new("exclude_individual_edges")
         .long("skip-indexing")
-        .help("Excludes individual edge images from the export"))
+        .help("Excludes individual edge images from the debug_preview"))
     ).get_matches()
 }
 
