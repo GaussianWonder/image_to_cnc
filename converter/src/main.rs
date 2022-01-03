@@ -51,6 +51,7 @@ fn main() {
             println!("Error saving image: {:?}", result.err());
         }
     }
+    // TODO add option to skip the canny edge detection and use the image as-is
 
     // if point precision is enabled, convert the edges to a JSON file
     if let Some(point_precision) = config.export_options.point_precision {

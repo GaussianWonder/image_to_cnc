@@ -89,6 +89,8 @@ pub fn to_points(image: &DynamicImage, point_precision: f32) -> Edges<usize> {
       visited[j][i] = true;
       let mut queue = vec![PixelIndex {x: i, y: j}];
 
+      // TODO adjust this algorithm to perform DFS
+      // TODO for each DFS new branch construct a new edge
       // perform fill on this edge
       while queue.len() > 0 {
         let current = queue.pop().unwrap(); // DFS
