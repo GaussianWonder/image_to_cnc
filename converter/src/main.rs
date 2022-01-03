@@ -9,11 +9,6 @@ fn main() {
     let config = args_parse::get();
 
     // construct the edges image from the grayscaled input
-    // let image = image::open(&config.input_file)
-    //     .expect("No image found at input_file path")
-    //     .grayscale()
-    //     .to_luma8();
-
     let original = image::open(&config.input_file)
         .expect("No image found at input_file path")
         .to_rgb8();
