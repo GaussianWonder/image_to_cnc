@@ -68,7 +68,7 @@ fn main() {
         let points = canny::to_points(&edges, point_precision);
         // println!("{:#?}", points);
 
-        canny::draw_edges_on(&mut original, &points, 1, &canny::rand_rgb_vec(20));
+        canny::draw_edges_on(&mut original, &points, 2, &canny::rand_rgb_vec(20));
         let saved_debug_preview = original.save(
             config.export_path.join(format!("{}_debug_preview.{}", config.input_name, config.input_extension))
         );

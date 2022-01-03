@@ -146,6 +146,7 @@ dependencies = [
  "image",
  "imageproc",
  "rand 0.8.4",
+ "rusttype",
  "sdl2",
  "sdl2-sys",
  "serde",

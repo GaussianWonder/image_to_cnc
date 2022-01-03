@@ -1,3 +1,5 @@
+#![cfg_attr(debug_assertions, allow(dead_code, unused_imports))]
+
 use serde::{Deserialize, Serialize};
 use imageproc::point::Point;
 use std::cmp::Ordering;
@@ -140,6 +142,7 @@ pub fn to_points(image: &image::GrayImage, point_precision: f32) -> Edges<usize>
           .filter(|&p| !visited[p.y][p.x])
           .collect::<Vec<PixelIndex>>();
 
+        let mut chosen = false; // determine if the point (0, 0) was an active choise 
         let mut min_cost: i32 = -1;
         let mut best_fit = PixelIndex {x: 0, y: 0};
         // take each neighbor of the given candidate pixel
@@ -171,6 +174,7 @@ pub fn to_points(image: &image::GrayImage, point_precision: f32) -> Edges<usize>
             // if valid, add it to the edge
             if is_precision_condition_met {
               if min_cost == -1 || cost < min_cost {
+                chosen = true;
                 min_cost = cost;
                 best_fit = neighbor;
               }
@@ -178,7 +182,9 @@ pub fn to_points(image: &image::GrayImage, point_precision: f32) -> Edges<usize>
           }
         }
         // now that all neighbors are checked, and we have a best fit, add it to the edge
-        edge.push(best_fit);
+        if chosen {
+          edge.push(best_fit);
+        }
       }
 
       // add the edge to the edges list only when not empty
@@ -209,7 +215,8 @@ pub fn to_serializable_points(image: &image::GrayImage, point_precision: f32) ->
 
 use image::{Rgb};
 use rand::Rng;
-use imageproc::drawing::draw_filled_circle_mut;
+use imageproc::drawing::{draw_filled_circle_mut, draw_text_mut, draw_line_segment_mut};
+use rusttype::{Font, Scale};
 
 pub fn rand_rgb() -> Rgb<u8> {
   let mut rng = rand::thread_rng();
@@ -223,17 +230,47 @@ pub fn rand_rgb_vec(len: usize) -> Vec<Rgb<u8>> {
 pub fn draw_edges_on<I>(image: &mut I, edges: &Edges<usize>, radius: i32, palette: &Vec<I::Pixel>)
 where
   I: image::GenericImage,
-  I::Pixel: 'static
+  I::Pixel: 'static,
+  // <<I as image::GenericImageView>::Pixel as image::Pixel>::Subpixel: imageproc::definitions::Clamp<f32>,
 {
   for edge in edges {
     let color = palette[edge.len() % palette.len()];
-    for point in edge {
+    for point_pair in edge.windows(2) {
+      let p1 = point_pair[0];
+      let p2 = point_pair[1];
+      draw_line_segment_mut(
+        image,
+        (p1.x as f32, p1.y as f32),
+        (p2.x as f32, p2.y as f32),
+        color
+      );
+    }
+
+    // let font = Vec::from(include_bytes!("../assets/DejaVuSans.ttf") as &[u8]);
+    // let font = Font::try_from_vec(font).unwrap();
+    // let font_size = 12.4;
+    // let scale = Scale {
+    //     x: font_size,
+    //     y: font_size,
+    // };
+
+    for (_index, point) in edge.iter().enumerate() {
       draw_filled_circle_mut(
         image,
         (point.x as i32, point.y as i32),
         radius,
         color,
       );
+
+      // draw_text_mut(
+      //   image,
+      //   image.get_pixel(point.x as u32, point.y as u32),
+      //   point.x as u32,
+      //   point.y as u32,
+      //   scale,
+      //   &font,
+      //   index.to_string().as_str(),
+      // );
     }
   }
 }
