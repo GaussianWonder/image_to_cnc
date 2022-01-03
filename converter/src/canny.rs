@@ -230,6 +230,15 @@ fn draw_edges(image: &mut DynamicImage, computation: &SerializebleComputation, r
   }
 
   if let Some(export) = per_edge_export_path {
+    if std::fs::remove_dir_all(&export.path).is_err() {
+      println!("Could not remove directory {}\nThe content will be replaced instead", export.path.display());
+    }
+    else {
+      if std::fs::create_dir(&export.path).is_err() {
+        println!("Could not create directory {}\nThis will probably fail", export.path.display());
+      };
+    }
+
     // reloop to avoid unnecessary font mingling
     let font = Vec::from(include_bytes!("../assets/DejaVuSans.ttf") as &[u8]);
     let font = Font::try_from_vec(font).unwrap();
@@ -289,10 +298,8 @@ fn draw_edges(image: &mut DynamicImage, computation: &SerializebleComputation, r
       }
 
       let export_path = export.path.join(format!("{}_{}_{}pt.{}", export.input_name, edge_index, edge.len(), export.extension));
-      let file_creation = File::create(&export_path);
-      if file_creation.is_ok() {
-        let save_result = edge_copy.save(&export_path);
-        if save_result.is_err() {
+      if File::create(&export_path).is_ok() {
+        if edge_copy.save(&export_path).is_err() {
           println!("Failed to save {}", &export_path.into_os_string().into_string().unwrap());
         }
       }
