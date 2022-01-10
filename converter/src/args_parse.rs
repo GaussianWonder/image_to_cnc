@@ -34,6 +34,7 @@ pub struct ExportOptions {
   pub exclude_cnc: bool,
 }
 
+#[allow(dead_code)]
 pub fn get_raw() -> ArgMatches {
   App::new("converter")
     .version("0.1.2")
@@ -157,6 +158,7 @@ fn get_export_options(args: &ArgMatches) -> ExportOptions {
   }
 }
 
+#[allow(dead_code)]
 pub fn get() -> Config {
   let args = get_raw();
 
