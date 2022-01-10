@@ -325,3 +325,57 @@ where
   copy.copy_from(image, 0, 0).unwrap();
   copy
 }
+
+const RESET_CMD: &str = "RESET";
+const PEN_UP: &str = "PEN UP";
+const PEN_DOWN: &str = "PEN DOWN";
+const MOVE_CMD: &str = "MOVE";
+const END_CMD: &str = "END";
+
+enum PenDirection {
+  UP,
+  DOWN,
+}
+
+fn move_cmd<T>(x: T, y: T) -> String
+where
+  T: std::fmt::Display,
+{
+  format!("{} {} {}", MOVE_CMD, x, y)
+}
+
+fn pen_cmd(direction: PenDirection) -> String {
+  match direction {
+    PenDirection::UP => PEN_UP.to_string(),
+    PenDirection::DOWN => PEN_DOWN.to_string(),
+  }
+}
+
+fn reset_cmd() -> String {
+  RESET_CMD.to_string()
+}
+
+fn end_cmd() -> String {
+  END_CMD.to_string()
+}
+
+pub fn to_cnc(computation: &SerializebleComputation) -> String {
+  let mut commands: Vec<String> = vec![
+    pen_cmd(PenDirection::UP),
+    reset_cmd()
+  ];
+
+  for edge in &computation.edges {
+    commands.push(move_cmd(edge[0].x, edge[0].y));
+    commands.push(pen_cmd(PenDirection::DOWN));
+    for point in edge {
+      commands.push(move_cmd(point.x, point.y));
+    }
+    commands.push(pen_cmd(PenDirection::UP));
+    // commands.push(reset_cmd()); // optional
+  }
+
+  commands.push(reset_cmd());
+  commands.push(end_cmd());
+  commands.join("\n")
+}

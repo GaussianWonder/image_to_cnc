@@ -84,6 +84,8 @@ OPTIONS:
     -V, --version                    Print version information
 ```
 
+> This is outdated, as of now `(0.1.2)`, the export command also contains a `--skip-cnc` flag to bypass the cnc command generation.
+
 #### Generate a GrayImage with edges
 
 ```bash

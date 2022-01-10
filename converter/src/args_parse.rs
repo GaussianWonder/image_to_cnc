@@ -30,11 +30,13 @@ pub struct ExportOptions {
   pub debug_preview: Option<f32>,
   // exclude individual image generation for each edge from the export
   pub exclude_individual_edges: bool,
+  // exclude cnc command generation
+  pub exclude_cnc: bool,
 }
 
 pub fn get_raw() -> ArgMatches {
   App::new("converter")
-    .version("0.1.1")
+    .version("0.1.2")
     .author("Virghileanu Teodor <@GaussianWonder>")
     .about("CNC Converter")
     .arg(Arg::new("INPUT")
@@ -88,6 +90,9 @@ pub fn get_raw() -> ArgMatches {
       .arg(Arg::new("exclude_individual_edges")
         .long("skip-indexing")
         .help("Excludes individual edge images from the debug_preview"))
+      .arg(Arg::new("exclude_cnc")
+        .long("skip-cnc")
+        .help("Excludes cnc commands from the export"))
     ).get_matches()
 }
 
@@ -119,6 +124,7 @@ fn get_export_options(args: &ArgMatches) -> ExportOptions {
 
     let image = export.is_present("image");
     let exclude_individual_edges = export.is_present("exclude_individual_edges");
+    let exclude_cnc = export.is_present("exclude_cnc");
 
     let debug_preview = if let Some(debug_preview) = export.value_of("debug_preview") {
       match debug_preview.parse::<f32>() {
@@ -137,6 +143,7 @@ fn get_export_options(args: &ArgMatches) -> ExportOptions {
       image,
       debug_preview,
       exclude_individual_edges,
+      exclude_cnc,
     }
   }
   else {
@@ -145,6 +152,7 @@ fn get_export_options(args: &ArgMatches) -> ExportOptions {
       image: true, // by default export just the image
       debug_preview: None,
       exclude_individual_edges: false,
+      exclude_cnc: false,
     }
   }
 }

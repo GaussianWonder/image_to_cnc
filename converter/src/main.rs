@@ -42,8 +42,9 @@ fn main() {
     // if point precision is enabled, convert the edges to a JSON file
     if let Some(point_precision) = config.export_options.point_precision {
         // convert points to json
+        let computation = canny::to_serializable_points(&edges_image, point_precision);
         let points_json = serde_json::to_string(
-            &canny::to_serializable_points(&edges_image, point_precision)
+            &computation
         ).unwrap();
         // save points to file
         let handle = File::create(config.export_path.join(format!("{}_points.json", config.input_name)));
@@ -56,6 +57,21 @@ fn main() {
             },
             Err(e) => {
                 println!("Error creating json file: {:?}", e);
+            }
+        }
+
+        if !config.export_options.exclude_cnc {
+            let command_fh = File::create(config.export_path.join(format!("{}_command.txt", config.input_name)));
+            match command_fh {
+                Ok(mut file) => {
+                    let saved_cmd = file.write_all(canny::to_cnc(&computation).as_bytes());
+                    if saved_cmd.is_err() {
+                        println!("Error saving points: {:?}", saved_cmd.err());
+                    }
+                },
+                Err(e) => {
+                    println!("Error creating json file: {:?}", e);
+                }
             }
         }
     }
