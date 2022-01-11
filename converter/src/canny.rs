@@ -92,7 +92,7 @@ pub fn to_points(image: &DynamicImage, point_precision: f32) -> Edges<usize> {
       // TODO for each DFS new branch construct a new edge
       // perform fill on this edge
       while queue.len() > 0 {
-        let current = queue.remove(0); // DFS
+        let current = queue.pop().unwrap(); // DFS
         // current unvisited neighbors bounded by the image and part of an edge
         let neighbors = get_edge_neighbors(current, image)
           .into_iter()
