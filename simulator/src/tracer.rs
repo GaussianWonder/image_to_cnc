@@ -42,10 +42,16 @@ impl Tracer {
     }
   }
 
+  pub fn disable(&mut self) {
+    self.enable = false;
+    self.finished = true;
+  }
+
   pub fn enable_execution(&mut self) {
     self.enable = true;
   }
 
+  #[allow(dead_code)]
   pub fn is_finished(&self) -> bool {
     self.finished
   }
@@ -63,6 +69,7 @@ impl Tracer {
     Some(command)
   }
 
+  #[allow(dead_code)]
   pub fn get_next_command(&self) -> Option<String> {
     if self.finished || !self.enable {
       return None;

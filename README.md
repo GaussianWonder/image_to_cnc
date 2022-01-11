@@ -2,7 +2,7 @@
 
 The [Standalone Conversion](converter/README.md) program has an independent documentation that can be found [here](converter/README.md).
 
-The [CNC Simulation](simulator/README.md) has an independent documentation that can be found [here](simulator/README.md).
+The [CNC Simulation](simulator/README.md) has an independent documentation that can be found [here](**simulator**/README.md).
 
 ## Preface
 
@@ -324,59 +324,75 @@ Thus the command list compilation is
 - **GO** `{X}` `{Y}`
   - Move the tip to coordinate {X} {Y}
 
+> When implementing, `GO` was deprecated and removed from the project
+
 ### **Config options**
 
-Both the simulation and the conversion algorithm benefit from the use of the same config options.
+A detailed config option documentation can be found on the [conversion program documentation](converter/README.md)
 
-The simulation needs to be configured in order to precisely display the effects of the algorithm.
+```text
+converter 0.1.1
+Virghileanu Teodor <@GaussianWonder>
+CNC Converter
 
-The conversion algorithm needs the configuration to match the capabilities of the machine that's going to be used.
+USAGE:
+    converter [OPTIONS] <INPUT> [SUBCOMMAND]
 
-Judging by the commands above, **machine precision** is a must configuration option. This will be a number that describes how far apart or *how close together* the generated points can be, before converting them into commands.
+ARGS:
+    <INPUT>    Sets the input image to use
 
-A flag that tells the algorithm whether to use **relative** or **absolute** tip movement is also required.
+OPTIONS:
+    -h, --high_threshold <FLOAT32>    Sets the high threshold for the Canny edge detector (<=1140.39) [default: 60.0]
+        --help                        Print help information
+    -l, --low-threshold <FLOAT32>     Sets the low threshold for the Canny edge detector (>=0) [default: 50.0]
+    -o, --output <DIRECTORY PATH>     Sets a custom export path
+        --skip-canny                  Skips the Canny edge detection and uses the input image as-is after a black and white conversion
+    -V, --version                     Print version information
 
-One last requirement is the possibility to map the input to some other **resolution**
+SUBCOMMANDS:
+    export    controls export features
+```
 
-The configuration will be described in a JSON file, or via arguments:
+```text
+converter-export 0.1.1
+Virghileanu Teodor <@GaussianWonder>
+controls export features
 
-- **--precision** `2`
-- **--absolute**
-- **--map** `100` `100`
+USAGE:
+    converter <INPUT> export [OPTIONS]
 
-```json
-{
-  "precision": 2,
-  "absolute": true,
-  "map": {
-    "x": 100,
-    "y": 100
-  }
-}
+OPTIONS:
+    -d, --debug_preview <FLOAT32>    Exports the image with points traced on it. This comes with its own scale value for point precision. See point_precision for details
+    -h, --help                       Print help information
+    -i, --image                      Export edge detected image to the given export path. This is disabled by the --skip-canny flag
+    -p, --p_precision <FLOAT32>      Exports edge points with a given precision. This is a scale factor for the initial image resolution
+        --skip-indexing              Excludes individual edge images from the debug_preview
+    -V, --version                    Print version information
 ```
 
 <div class="page"/>
 
 ## **Design**
 
-The simulation will display a simple control to choose an input file and a configuration file.
+The simulation will pick an image from the assets folder and let the user change some configuration settigs of the conversion program.
 
-Once both are selected, **2/3** of the screen will be used to display the preview with several controls available to the user:
+The settings which can be played with are:
 
-- **Toggle input**
-  - Displays the input image below the preview
-  - If no image was provided, it will draw the 2D Graphical shapes under the preview instead
-- **Stop**
-  - Pauses the simulation
-- **Next**
-  - If stopped, this will execute the next command
-  - While normal execution, this button will not be available
-- **Resume**
-  - Resumes the normal execution of the preview
-- **Reset**
-  - Delete everything and restart the process
+- Precision (slider)
+- Low Threshold (slider)
+- High Threshold (slider)
 
-Changing the input will result in a **Reset**.
+The settings which change the simulator drawing:
+
+- Speed (slider)
+- Scale (slider)
+- Offset (XY pad)
+
+The simulation never stops, but it can be resetted.
+
+Debug images and exports from the conversion program can be viewed outside the application
+
+Changing the input will result in a reactive color hint of the **Reset** button.
 
 <div class="page"/>
 
@@ -390,9 +406,20 @@ Changing the input will result in a **Reset**.
 
 ## **Conclusions**
 
-```text
-[...]
-```
+This project has proven success, although with minor bugs.
+
+The conversion program works good:
+
+- it has a very nice and intuitive CLI
+- it is capable of encoding and decoding multiple formats of images
+- it can detect edges
+- it can trace the detected edges and plot points in regard to a selected precision
+- it can convert the points into CNC-alike commands
+
+The simulator works as described:
+
+- it parses the commands retrieved
+- it simulates a CNC machine
 
 <div class="page"/>
 

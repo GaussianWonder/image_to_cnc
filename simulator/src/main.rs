@@ -243,6 +243,7 @@ fn update(app: &App, model: &mut Model, update: Update) {
         .set(model.ids.reset_button, ui)
     {
         if model.config_hash != new_hash_config {
+            model.tracer.disable();
             converter::execute(&model.config);
             let commands = parse_commands_file(&model.config);
             model.config_hash = new_hash_config;
@@ -270,7 +271,12 @@ fn view(app: &App, model: &Model, frame: Frame) {
     // Begin drawing
     let draw = app.draw();
 
-    draw.background().rgb(0.02, 0.02, 0.02);
+    if model.tracer.is_finished() {
+        draw.background().rgb(0.52, 0.02, 0.02);
+    }
+    else {
+        draw.background().rgb(0.02, 0.02, 0.02);
+    }
 
     model.tracer.draw_current(&draw, model.scale, model.offset);
 
