@@ -16,6 +16,8 @@ pub struct Tracer {
 
   current: DrawingTip,
   previous: DrawingTip,
+
+  lines: Vec<(Point2, Point2)>,
 }
 
 impl Tracer {
@@ -35,6 +37,8 @@ impl Tracer {
         y: 0.0,
         pen: PenDirection::UP,
       },
+
+      lines: vec![],
     }
   }
 
@@ -110,37 +114,43 @@ impl Tracer {
 
         if mutated {
           self.previous = copy_current;
+
+          if self.current.pen == PenDirection::DOWN && self.previous.pen == PenDirection::DOWN {
+            self.lines.push((
+              Point2::new(self.previous.x, self.previous.y),
+              Point2::new(self.current.x, self.current.y)
+            ));
+          }
         }
       }
       self.enable = false;
     }
   }
 
-  pub fn draw_current(&self, draw: &nannou::Draw) {
-    if self.current.pen == PenDirection::DOWN && self.previous.pen == PenDirection::DOWN {
+  pub fn draw_current(&self, draw: &nannou::Draw, scale: f32, offset: Point2) {
+    for ln in &self.lines {
+      let pt1 = Point2::new(ln.0.x * scale + offset.x, ln.0.y * scale + offset.y);
+      let pt2 = Point2::new(ln.1.x * scale + offset.x, ln.1.y * scale + offset.y);
+
       draw.line()
-        .start(pt2(self.previous.x, self.previous.y))
-        .end(pt2(self.current.x, self.current.y))
+        .start(pt1)
+        .end(pt2)
         .color(YELLOW);
+    }
 
-      draw.ellipse()
-        .xy(pt2(self.current.x, self.current.y))
-        .radius(10.0)
-        .resolution(30.0)
-        .color(WHITE);
+    let pt = Point2::new(self.current.x * scale + offset.x, self.current.y * scale + offset.y);
+    draw.ellipse()
+      .xy(pt)
+      .radius(10.0)
+      .resolution(30.0)
+      .color(WHITE);
 
+    if self.current.pen == PenDirection::DOWN && self.previous.pen == PenDirection::DOWN {
       draw.ellipse()
-        .xy(pt2(self.current.x, self.current.y))
+        .xy(pt)
         .radius(5.0)
         .resolution(30.0)
         .color(RED);
-    }
-    else {
-      draw.ellipse()
-        .xy(pt2(self.current.x, self.current.y))
-        .radius(10.0)
-        .resolution(30.0)
-        .color(WHITE);
     }
   }
 }

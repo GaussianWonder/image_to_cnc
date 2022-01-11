@@ -80,6 +80,8 @@ struct Model {
 
     config_hash: u64,
     config: Config,
+    scale: f32,
+    offset: Point2,
 
     commands: Vec<String>,
 
@@ -91,6 +93,8 @@ struct Model {
 
 widget_ids! {
     struct Ids {
+        draw_scale,
+        draw_offset,
         point_precision,
         low_threshold,
         high_threshold,
@@ -133,6 +137,8 @@ fn init(app: &App) -> Model {
 
         config_hash,
         config,
+        scale: 1.0,
+        offset: Point2::new(0.0, 0.0),
 
         commands: commands.clone(),
 
@@ -192,6 +198,34 @@ fn update(app: &App, model: &mut Model, update: Update) {
         model.speed = value.round() as u32;
     }
 
+    for value in slider(model.scale, 0.0001, 5.0)
+        .down(10.0)
+        .label("Scale")
+        .set(model.ids.draw_scale, ui)
+    {
+        model.scale = value;
+    }
+
+    for (x, y) in widget::XYPad::new(
+        model.offset.x,
+        -200.0,
+        200.0,
+        model.offset.y,
+        -200.0,
+        200.0,
+    )
+        .down(10.0)
+        .w_h(200.0, 200.0)
+        .label("Offset")
+        .label_font_size(15)
+        .rgb(0.3, 0.3, 0.3)
+        .label_rgb(1.0, 1.0, 1.0)
+        .border(0.0)
+        .set(model.ids.draw_offset, ui)
+    {
+        model.offset = Point2::new(x, y);
+    }
+
     let new_hash_config = hash_config(&model.config);
     let reactive_red_color_value: f32 = if new_hash_config != model.config_hash {
         0.0
@@ -218,26 +252,6 @@ fn update(app: &App, model: &mut Model, update: Update) {
         model.tracer = Tracer::new(model.commands.clone());
     }
 
-    // for (x, y) in widget::XYPad::new(
-    //     model.position.x,
-    //     -200.0,
-    //     200.0,
-    //     model.position.y,
-    //     -200.0,
-    //     200.0,
-    // )
-    // .down(10.0)
-    // .w_h(200.0, 200.0)
-    // .label("Position")
-    // .label_font_size(15)
-    // .rgb(0.3, 0.3, 0.3)
-    // .label_rgb(1.0, 1.0, 1.0)
-    // .border(0.0)
-    // .set(model.ids.position, ui)
-    // {
-    //     model.position = Point2::new(x, y);
-    // }
-
     model.frame_count += 1;
     if model.frame_count % model.speed == 0 {
         model.tracer.enable_execution();
@@ -257,9 +271,9 @@ fn view(app: &App, model: &Model, frame: Frame) {
     // Begin drawing
     let draw = app.draw();
 
-    // draw.background().rgb(0.02, 0.02, 0.02);
+    draw.background().rgb(0.02, 0.02, 0.02);
 
-    model.tracer.draw_current(&draw);
+    model.tracer.draw_current(&draw, model.scale, model.offset);
 
     // Write the result of our drawing to the window's frame.
     draw.to_frame(app, &frame).unwrap();
