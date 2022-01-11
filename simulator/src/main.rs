@@ -1,4 +1,3 @@
-mod colors;
 mod tracer;
 
 use tracer::*;
