@@ -34,7 +34,41 @@ pub struct ExportOptions {
   pub exclude_cnc: bool,
 }
 
-#[allow(dead_code)]
+impl Config {
+  pub fn new(input: &str, output: &str, low_threshold: f32, high_threshold: f32, skip_canny_edge_detection: bool, precision: f32) -> Config {
+    let input_file = PathBuf::from(input);
+    if !input_file.is_file() {
+      panic!("The input provided does not point to a file or does not exist.");
+    }
+    
+    if check_input_extension(&input_file) == false {
+      panic!("The input file does not have a valid extension.");
+    }
+
+    let export_path = PathBuf::from(output);
+
+    let file_name = input_file.with_extension("").file_name().unwrap().to_ascii_lowercase().to_str().unwrap().to_string();
+    let file_extension = input_file.extension().unwrap().to_ascii_lowercase().to_str().unwrap().to_string();
+
+    Config {
+      input_file,
+      export_path,
+      input_name: file_name,
+      input_extension: file_extension,
+      low_threshold,
+      high_threshold,
+      skip_canny_edge_detection,
+      export_options: ExportOptions {
+        point_precision: Some(precision),
+        image: true,
+        debug_preview: Some(precision),
+        exclude_individual_edges: false,
+        exclude_cnc: false,
+      },
+    }
+  }
+}
+
 pub fn get_raw() -> ArgMatches {
   App::new("converter")
     .version("0.1.2")
@@ -158,7 +192,6 @@ fn get_export_options(args: &ArgMatches) -> ExportOptions {
   }
 }
 
-#[allow(dead_code)]
 pub fn get() -> Config {
   let args = get_raw();
 

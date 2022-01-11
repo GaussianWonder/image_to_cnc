@@ -332,7 +332,8 @@ const PEN_DOWN: &str = "PEN DOWN";
 const MOVE_CMD: &str = "MOVE";
 const END_CMD: &str = "END";
 
-enum PenDirection {
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum PenDirection {
   UP,
   DOWN,
 }

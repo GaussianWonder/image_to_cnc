@@ -1,8 +1,10 @@
 [package]
 name = "simulator"
 version = "0.1.0"
-edition = "2018"
-authors = ["gaussianwonder <teo.virghi@yahoo.ro>"]
+edition = "2021"
+resolver = "2"
+description = "Simulator for the converter package"
 
 [dependencies]
 nannou = "0.17"
+converter = { path = "../converter" }
