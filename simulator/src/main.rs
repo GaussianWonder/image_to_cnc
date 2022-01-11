@@ -207,11 +207,11 @@ fn update(app: &App, model: &mut Model, update: Update) {
 
     for (x, y) in widget::XYPad::new(
         model.offset.x,
-        -200.0,
-        200.0,
+        -800.0,
+        800.0,
         model.offset.y,
-        -200.0,
-        200.0,
+        -800.0,
+        800.0,
     )
         .down(10.0)
         .w_h(200.0, 200.0)
