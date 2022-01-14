@@ -75,7 +75,11 @@ calculatorului
     - [**Config options**](#config-options)
   - [**Design**](#design)
   - [**Implementation**](#implementation)
+    - [Conversion](#conversion)
+    - [Simulator](#simulator)
   - [Testing and Validation](#testing-and-validation)
+    - [I/O](#io)
+    - [Point conversion](#point-conversion)
   - [**Conclusions**](#conclusions)
   - [Bibliography](#bibliography)
 
@@ -326,6 +330,8 @@ Thus the command list compilation is
 
 > When implementing, `GO` was deprecated and removed from the project
 
+<div class="page"/>
+
 ### **Config options**
 
 A detailed config option documentation can be found on the [conversion program documentation](converter/README.md)
@@ -398,9 +404,70 @@ Changing the input will result in a reactive color hint of the **Reset** button.
 
 ## **Implementation**
 
+The implementation comes with a few dependencies for both the simulation and the conversion program.
+
+### Conversion
+
+**Dependencies:**
+
+- serde - serialize and deserialize data in json format
+  - serde
+  - serde_json
+- clap - command line argument parsing
+- image - encoding and decoding images
+  - image
+  - imageproc
+
+The conversion program comes with its difficulties. Most of the relevant code is packed in `lib.rs` and `canny.rs`, the most notable being the `to_points` and the `to_serializable_points` functions.
+
+Both take the GrayImage dithered with bi-level color map (Black and White) as input and return a vector of edges (vector of vector of points).
+
+The problem that is targetted here is the ordering of the points such that the points are clockwise or anti-clockwise sorted.
+
+The current implementation works well for thin lines, as it is using DFS to fetch the points in a tracable order, however, to handle thick lines we should instead pick the edge to insert the point into from a big set of edges, instead of creating edges iterratively.
+
+### Simulator
+
+**Dependencies:**
+
+- nannou - 2D and 3D rendering
+- converter - The converter above
+
+The simulator is a simple 2D application that uses the results of the conversion program and controls a drawing pen on the screen to draw the edges sequentially.
+
+It contains minimal code to provide a simple interactible UI with enough feedback to the user.
+
+I will not go into details, since the code can be inspected for non-project related details.
+
+The parsing of commands and drawing of the CNC milling tip is available in `tracer.rs` which exposes a class that manages a virtual pen.
+
 <div class="page"/>
 
 ## Testing and Validation
+
+While testing the simulator nothing can be noted apart from the inverted projection of the points. This is due to the different coordinate system images and graphics APIs use. This is not mitigated in any way, however a rotation transformation can be applied on all points, or the point coordinates can be inverted.
+
+The most notable tests are only concerning the conversion program:
+
+### I/O
+
+Sometimes the program would panic _(cancel thread execution because of unexpected errors)_ when handling file reads and writes if the directories are not created beforehand.
+
+This problem is not solved, however, a very good and detailed message is displayed before the program exists. This is ok, since the program is intended to be used as a tool, if any of the user input provided from the CLI is missing, the user might've done a mistake.
+
+Examples of such messages can be seen at every: (`lib.rs`, `arg_parse.rs`)
+
+- `.expect()` call
+- `.is_err()` check on the `Result` type
+- `if let Some(x)` check on the `Option` type
+
+### Point conversion
+
+When testing i found that it is very hard to debug the program because the only feedback i got was a JSON with hundreds of points.
+
+Thus the first idea was to display the images in an OpenGL window. This quickly got aborted because the converter program should be bloated with such things.
+
+The solution to this was to draw the points and edges on the actual image, then save it to a file. This is how the `--debug_preview` `--skip-indexing` flags were born.
 
 <div class="page"/>
 
@@ -420,6 +487,8 @@ The simulator works as described:
 
 - it parses the commands retrieved
 - it simulates a CNC machine
+
+Due to this being so easy to get up and running on every platform, no images are provided. Installing rust and following each submodule's dependencies is enough to get started. Rust will handle everything for you.
 
 <div class="page"/>
 
