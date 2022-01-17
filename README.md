@@ -473,9 +473,9 @@ The solution to this was to draw the points and edges on the actual image, then 
 
 ## **Conclusions**
 
-This project has proven success, although with minor bugs.
+This project has proven success, although it still contains minor bugs.
 
-The conversion program works good:
+The conversion program works well:
 
 - it has a very nice and intuitive CLI
 - it is capable of encoding and decoding multiple formats of images
