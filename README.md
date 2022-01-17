@@ -2,7 +2,7 @@
 
 The [Standalone Conversion](converter/README.md) program has an independent documentation that can be found [here](converter/README.md).
 
-The [CNC Simulation](simulator/README.md) has an independent documentation that can be found [here](**simulator**/README.md).
+The [CNC Simulation](simulator/README.md) has an independent documentation that can be found [here](simulator/README.md).
 
 ## Preface
 
