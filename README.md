@@ -481,7 +481,7 @@ The conversion program works well:
 - it is capable of encoding and decoding multiple formats of images
 - it can detect edges
 - it can trace the detected edges and plot points in regard to a selected precision
-- it can convert the points into CNC-alike commands
+- it can convert the points into GCODE-alike commands
 
 The simulator works as described:
 
