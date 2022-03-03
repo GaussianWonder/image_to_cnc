@@ -24,6 +24,8 @@ cargo build --release
 
 > I do not recommend building with the `display-window` feature enabled. It server no other purpose apart from debugging.
 
+<div class="page" />
+
 ## Usage / Examples
 
 Running the help command:
@@ -57,6 +59,8 @@ SUBCOMMANDS:
     export    controls export features
 ```
 
+<div class="page" />
+
 ### Basic export configuring
 
 Running:
@@ -86,6 +90,8 @@ OPTIONS:
 
 > This is outdated, as of now `(0.1.2)`, the export command also contains a `--skip-cnc` flag to bypass the cnc command generation.
 
+<div class="page" />
+
 #### Generate a GrayImage with edges
 
 ```bash
@@ -111,6 +117,8 @@ cargo run -- ./assets/test.jpg -l 50 -h 60
 ```bash
 cargo run -- ./assets/test.jpg -o ./assets/export
 ```
+
+<div class="page" />
 
 ### 2D Point Generation
 
@@ -143,6 +151,8 @@ Generate the points, export them as JSON.
 ```bash
 cargo run -- ./assets/test.jpg -o ./assets/export export -p 0.50
 ```
+
+<div class="page" />
 
 #### More examples
 
